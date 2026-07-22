@@ -1,0 +1,5 @@
+# No in-loop metrics for now — loss (l1 + stft) is tracked via writer.loss_names.
+# Full-reference metrics (PESQ/STOI/SI-SDR) are computed separately on the frozen
+# val/test pairs (data/synth_pairs), not in the training loop.
+train: []
+inference: []

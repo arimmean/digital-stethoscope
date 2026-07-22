@@ -1,0 +1,35 @@
+# Combined pipeline: Demucs v4 (remove voice) -> notch -> Butterworth bandpass.
+#
+# Rationale (from the n=144 DNSMOS + listening: methods are COMPLEMENTARY):
+#   - Demucs v4 handles BROADBAND/voice interference (talk, crying, movement)
+#   - notch + bandpass handle the NARROW spectral targets (power-line, low heart)
+# Order is Demucs FIRST: it's a full-band 44.1k model and must see the unfiltered
+# signal it was trained on; bandpassing before it would feed it out-of-distribution
+# audio. The DSP filters then clean the voice-removed residual.
+#
+# Reuses DSPPipeline as a GENERIC sequential model-chain (its name says "DSP" but
+# it chains anything with the {"audio": ...} contract — DemucsV4Model included).
+# Needs _convert_: all (list holds nn.Modules) — same gotcha as dsp_baseline.yaml.
+#
+# Whole pipeline runs at 44.1 kHz (Demucs's required rate); the DSP filters are
+# therefore instantiated at 44100 too. Run with:
+#   python inference.py model=combined datasets.test.target_sr=44100 \
+#     datasets.test.audio_dir=... inferencer.save_path=...
+_target_: src.model.DSPPipeline
+_convert_: all
+filters:
+  - _target_: src.model.DemucsV4Model
+    input_sample_rate: ${datasets.test.target_sr}
+    mode: subtract
+    remove_stems: [vocals]
+    alpha: 1.0
+  - _target_: src.model.NotchFilter
+    sample_rate: ${datasets.test.target_sr}
+    freq: 50.0
+    n_harmonics: 4
+    quality: 30.0
+  - _target_: src.model.BandpassFilter
+    sample_rate: ${datasets.test.target_sr}
+    low_hz: 100.0
+    high_hz: 2000.0
+    order: 4

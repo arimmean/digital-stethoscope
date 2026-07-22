@@ -1,0 +1,8 @@
+# Standalone spectral Wiener filter (Lim & Oppenheim 1979), noise estimated
+# from the signal itself. For listening to its effect in isolation.
+_target_: src.model.WienerFilter
+sample_rate: ${datasets.test.target_sr}
+n_fft: 1024
+hop_length: null        # defaults to n_fft // 4
+noise_percentile: 10.0  # per-bin noise PSD = this percentile of |S|^2 over time
+gain_floor: 0.05        # min Wiener gain; attenuate not null (limits musical noise)

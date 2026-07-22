@@ -1,0 +1,24 @@
+# Stronger DSP baseline: notch (50 Hz + harmonics) -> Butterworth bandpass
+# (100-2000 Hz) -> spectral Wiener. The optional Wiener stage of the
+# literature stack (Lim & Oppenheim 1979). Kept separate from dsp_baseline.yaml
+# (notch->bandpass) so the verified two-stage baseline stays stable and the two
+# can be A/B'd by ear.
+_target_: src.model.DSPPipeline
+_convert_: all
+filters:
+  - _target_: src.model.NotchFilter
+    sample_rate: ${datasets.test.target_sr}
+    freq: 50.0
+    n_harmonics: 4
+    quality: 30.0
+  - _target_: src.model.BandpassFilter
+    sample_rate: ${datasets.test.target_sr}
+    low_hz: 100.0
+    high_hz: 2000.0
+    order: 4
+  - _target_: src.model.WienerFilter
+    sample_rate: ${datasets.test.target_sr}
+    n_fft: 1024
+    hop_length: null
+    noise_percentile: 10.0
+    gain_floor: 0.05

@@ -1,0 +1,30 @@
+# Combined + Wiener: Demucs v4 (remove voice) -> notch -> bandpass -> spectral Wiener.
+# Tests whether adding the Wiener stage (which improved aggregate BAK as dsp_wiener)
+# beats plain `combined`. Same rationale/order as combined.yaml; Wiener last, cleaning
+# the residual noise floor after voice removal + spectral filtering. All at 44.1 kHz.
+#   python inference.py model=combined_wiener datasets.test.target_sr=44100 \
+#     datasets.test.audio_dir=... inferencer.save_path=...
+_target_: src.model.DSPPipeline
+_convert_: all
+filters:
+  - _target_: src.model.DemucsV4Model
+    input_sample_rate: ${datasets.test.target_sr}
+    mode: subtract
+    remove_stems: [vocals]
+    alpha: 1.0
+  - _target_: src.model.NotchFilter
+    sample_rate: ${datasets.test.target_sr}
+    freq: 50.0
+    n_harmonics: 4
+    quality: 30.0
+  - _target_: src.model.BandpassFilter
+    sample_rate: ${datasets.test.target_sr}
+    low_hz: 100.0
+    high_hz: 2000.0
+    order: 4
+  - _target_: src.model.WienerFilter
+    sample_rate: ${datasets.test.target_sr}
+    n_fft: 1024
+    hop_length: null
+    noise_percentile: 10.0
+    gain_floor: 0.05

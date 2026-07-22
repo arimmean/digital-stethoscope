@@ -1,0 +1,6 @@
+# Standalone Butterworth bandpass (for listening to its effect in isolation).
+_target_: src.model.BandpassFilter
+sample_rate: ${datasets.test.target_sr}
+low_hz: 100.0
+high_hz: 2000.0
+order: 4

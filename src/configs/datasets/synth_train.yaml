@@ -1,0 +1,27 @@
+# On-the-fly synthetic (noisy,clean) pairs for Wave-U-Net training.
+# train + val both mixed on-the-fly here for in-loop monitoring; the FROZEN
+# val/test pairs on disk (data/synth_pairs) are the separate comparable-eval set.
+# NOTE: keys must be only partition names — get_dataloaders iterates
+# config.datasets.keys() and instantiates each, so no shared-anchor key here.
+train:
+  _target_: src.datasets.noisy_mix_dataset.build_synth_dataset
+  split: train
+  json_path: data/medical_records/merged-1761225412230.json
+  wav_dir: data/medical_records/ALL
+  target_sr: 22050
+  snr_range: [-5.0, 15.0]
+  crop_len: 22050   # 1.0 s @ 22.05k fixed window for batching
+  ratios: [0.7, 0.15, 0.15]
+  split_seed: 42
+  mix_seed: 42
+val:
+  _target_: src.datasets.noisy_mix_dataset.build_synth_dataset
+  split: val
+  json_path: data/medical_records/merged-1761225412230.json
+  wav_dir: data/medical_records/ALL
+  target_sr: 22050
+  snr_range: [-5.0, 15.0]
+  crop_len: 22050
+  ratios: [0.7, 0.15, 0.15]
+  split_seed: 42
+  mix_seed: 1234

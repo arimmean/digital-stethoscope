@@ -1,0 +1,20 @@
+# Pretrained source-separation denoiser: torchaudio Hybrid Demucs
+# (HDEMUCS_HIGH_MUSDB_PLUS). Default mode "subtract": out = x - alpha*vocals,
+# i.e. subtract the estimated voice interference. With alpha < 1 this is gentle
+# when vocals is confident (~95%), preserving breathing that rode along — see
+# the overlap-risk discussion in filter_ablation_results.md.
+#
+# HDEMUCS runs at 44.1 kHz and this wrapper does NOT resample, so the dataset
+# MUST feed 44100. Run with an explicit override:
+#   python inference.py model=demucs datasets.test.target_sr=44100 \
+#     datasets.test.audio_dir=... inferencer.save_path=...
+# (input_sample_rate interpolates the dataset rate so the assert fails loud if
+#  you forget the override, rather than pitch-shifting silently.)
+#
+# To compare the original hard-drop instead: model.mode=keep
+# To tune subtraction strength by ear:        model.alpha=0.7
+_target_: src.model.DemucsModel
+input_sample_rate: ${datasets.test.target_sr}
+mode: subtract
+remove_stems: [vocals]   # the interference channel to subtract
+alpha: 1.0               # 1.0 = full removal; lower = gentler (preserves overlap)

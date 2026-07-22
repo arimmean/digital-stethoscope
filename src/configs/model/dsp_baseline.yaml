@@ -1,0 +1,16 @@
+# Conventional DSP denoising baseline: notch (50 Hz + harmonics) -> Butterworth
+# bandpass (100-2000 Hz). sample_rate is interpolated from the dataset working
+# rate so the filters are always designed for the actual audio SR.
+_target_: src.model.DSPPipeline
+_convert_: all
+filters:
+  - _target_: src.model.NotchFilter
+    sample_rate: ${datasets.test.target_sr}
+    freq: 50.0
+    n_harmonics: 10
+    quality: 30.0
+  - _target_: src.model.BandpassFilter
+    sample_rate: ${datasets.test.target_sr}
+    low_hz: 100.0
+    high_hz: 2000.0
+    order: 4

@@ -1,0 +1,11 @@
+# L1 + multi-resolution STFT (Defossez et al. 2020, "Real Time Speech Enhancement
+# in the Waveform Domain"): L1 primary, MR-STFT a small-weighted spectral shaper.
+# Measured raw ratio stft/l1 ~169x on a real batch → lambda~0.006 equalizes;
+# stft_weight=0.005 keeps L1 slightly dominant (STFT ~0.85x L1). Tune by watching
+# both components stay comparable.
+_target_: src.loss.DenoiseLoss
+l1_weight: 1.0
+stft_weight: 0.005
+fft_sizes: [512, 1024, 2048]
+hop_sizes: [128, 256, 512]
+win_lengths: [512, 1024, 2048]

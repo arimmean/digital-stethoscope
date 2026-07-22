@@ -1,0 +1,38 @@
+defaults:
+  - model: wave_unet
+  - writer: cometml_denoise
+  - metrics: denoise
+  - datasets: synth_train
+  - dataloader: denoise
+  - _self_
+
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 3e-4
+lr_scheduler:
+  _target_: torch.optim.lr_scheduler.OneCycleLR
+  max_lr: 3e-4
+  pct_start: 0.1
+  steps_per_epoch: ${trainer.epoch_len}
+  epochs: ${trainer.n_epochs}
+  anneal_strategy: cos
+loss_function:
+  _target_: src.loss.DenoiseLoss
+  l1_weight: 1.0
+  stft_weight: 0.005   # L1 + MR-STFT (Defossez 2020); ~equalizes the 169x raw ratio
+  sisdr_weight: 0.0    # >0 to optimize SI-SDR (the eval metric); overridable for grid
+
+trainer:
+  log_step: 50
+  n_epochs: 50
+  epoch_len: 200
+  device_tensors: ["audio", "target"]  # moved to GPU
+  resume_from: null
+  device: auto
+  override: False
+  monitor: "min val_loss"
+  save_period: 5
+  early_stop: ${trainer.n_epochs}
+  save_dir: "saved"
+  seed: 1
+  # override: true

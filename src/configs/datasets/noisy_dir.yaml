@@ -1,0 +1,9 @@
+test:
+  _target_: src.datasets.NoisyDirDataset
+  audio_dir: ???  # required at CLI: datasets.test.audio_dir=/path/to/wavs
+  recursive: false
+  target_sr: 22050
+  target_dir: null   # optional parallel clean-reference dir (for later full-ref metrics)
+  limit: null        # cap number of files (e.g. datasets.test.limit=3 for quick listens)
+  shuffle_index: true
+  # min_sample_rate: ${datasets.test.target_sr}

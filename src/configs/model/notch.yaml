@@ -1,0 +1,6 @@
+# Standalone power-line notch filter (for listening to its effect in isolation).
+_target_: src.model.NotchFilter
+sample_rate: ${datasets.test.target_sr}
+freq: 50.0
+n_harmonics: 4
+quality: 30.0

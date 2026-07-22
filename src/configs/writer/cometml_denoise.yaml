@@ -1,0 +1,12 @@
+# CometML logger for denoising. API KEY comes from the environment
+# (COMET_API_KEY) — NEVER put the key in this file or any tracked config.
+#   export COMET_API_KEY=...   (or ~/.comet.config)
+_target_: src.logger.CometMLWriter
+project_name: "digital_stethoscope"
+workspace: null
+run_name: "wave_unet"
+mode: "online"
+loss_names: ["loss", "l1_loss", "stft_loss", "sisdr"]
+log_checkpoints: False
+id_length: 32
+audio_sample_rate: 22050  # for add_audio in DenoiseTrainer logging

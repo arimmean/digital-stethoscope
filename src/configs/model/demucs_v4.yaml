@@ -1,0 +1,19 @@
+# Demucs v4 (htdemucs, hybrid transformer) from the demucs pip package.
+# Stronger separator than the v3 torchaudio HDEMUCS; also normalizes the mix
+# CLI-style (the v3 wrapper did not) and uses apply_model's built-in chunking +
+# shift-trick. Default mode "subtract": out = x - alpha*vocals.
+#
+# Runs at 44.1 kHz, no resample here, so feed the dataset at 44100:
+#   python inference.py model=demucs_v4 datasets.test.target_sr=44100 \
+#     datasets.test.audio_dir=... inferencer.save_path=...
+#
+# Compare hard-drop: model.mode=keep | tune subtraction: model.alpha=0.7
+# Better separation (slower): model.shifts=2 (or higher)
+_target_: src.model.DemucsV4Model
+input_sample_rate: ${datasets.test.target_sr}
+mode: subtract
+remove_stems: [vocals]
+alpha: 1.0
+shifts: 1        # shift-trick passes; >1 = better & slower
+split: true      # chunked processing (bounds memory on long files)
+overlap: 0.25

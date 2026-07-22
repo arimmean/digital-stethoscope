@@ -1,0 +1,5 @@
+# Pure SI-SDR loss (no L1, no STFT) — the cleanest test of "train the metric".
+_target_: src.loss.DenoiseLoss
+l1_weight: 0.0
+stft_weight: 0.0
+sisdr_weight: 1.0

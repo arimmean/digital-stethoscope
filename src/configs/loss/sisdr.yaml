@@ -1,0 +1,10 @@
+# SI-SDR-dominant loss: optimize the metric we evaluate on. Small STFT kept to
+# preserve spectral (wheeze/crepitus) texture; L1 off (SI-SDR is scale-invariant
+# and covers time-domain fidelity). Addresses wave_unet_v1 scoring below the floor.
+_target_: src.loss.DenoiseLoss
+l1_weight: 0.0
+stft_weight: 0.005
+sisdr_weight: 1.0
+fft_sizes: [512, 1024, 2048]
+hop_sizes: [128, 256, 512]
+win_lengths: [512, 1024, 2048]

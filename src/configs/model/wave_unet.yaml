@@ -1,0 +1,7 @@
+# Wave-U-Net denoiser. Sized small (1.85M params) for the thin ~0.33h clean pool
+# to resist overfit; bump n_levels/base_channels if it underfits.
+_target_: src.model.WaveUNet
+n_levels: 4
+base_channels: 16
+kernel: 15
+residual: true

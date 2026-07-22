@@ -1,0 +1,17 @@
+defaults:
+  - model: identity
+  - datasets: noisy_dir
+  - dataloader: inference
+  - _self_
+
+inferencer:
+  device_tensors: ["audio"]   # tensors moved to GPU by the inferencer
+  device: auto                # "auto" | "cuda" | "cpu"
+  save_path: "identity_smoketest"   # output goes to data/saved/<save_path>/<part>/
+  # SR written to saved wavs. Defaults to the denoiser's working rate
+  # (datasets.test.target_sr) so saved audio is never silently relabeled /
+  # pitch-shifted. The inferencer does NOT resample — downsampling to a
+  # downstream classifier's rate (e.g. 16000) is a separate explicit eval step.
+  save_sample_rate: ${datasets.test.target_sr}
+  seed: 1
+  from_pretrained: null       # null is valid: stateless DSP models have no checkpoint

@@ -1,0 +1,9 @@
+_target_: src.logger.WandBWriter
+project_name: "digital-stethoscope-denoise"
+entity: null
+run_name: "wave_unet"
+mode: "online"
+loss_names: ["loss", "l1_loss", "stft_loss"]  # logged components
+log_checkpoints: False
+id_length: 8
+audio_sample_rate: 22050  # for add_audio in DenoiseTrainer logging
